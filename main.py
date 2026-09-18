@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import fdb
+from flask_bcrypt import generate_password_hash
 
 app = Flask(__name__)
 
@@ -12,8 +13,37 @@ password = "sysdba"
 
 con = fdb.connect(host=host, database=database, user=user, password=password)
 
-@app.route("/")
+def validar_senha(senha):
+    min_caracteres = False
+    min_upper = False
+    min_lower = False
+    min_num = False
+    min_caracteres_esp = False
+
+    if len(senha) >= 8:
+        min_caracteres = True
+    for caracteres in senha:
+        if caracteres.isalpha() and caracteres == caracteres.upper():
+            min_upper = True
+        if caracteres.isalpha() and caracteres == caracteres.lower():
+            min_lower = True
+        if caracteres.isdigit():
+            min_num = True
+        if not caracteres.isalpha() and not caracteres.isdigit():
+            min_caracteres_esp = True
+    if min_caracteres == True and min_upper == True and min_lower == True and min_num == True:
+        validacao == True
+        return(validacao)
+    else:
+        validacao = False
+        return(validacao)
+
+@app.route('/')
 def index():
+    return render_template("login.html")
+
+@app.route("/home")
+def home():
     cursor = con.cursor()
     cursor.execute(""" SELECT l.id_livro
                             ,l.nome
@@ -93,6 +123,23 @@ def deletar(id):
     finally:
         cursor.close()
 
+@app.route('/cadastrar_usuario', methods=['GET', 'POST'])
+def cadastrar_usuario():
+    nome = request.form['nome']
+    email = request.form['email']
+    senha = generate_password_hash(request.form['senha'])
+    cursor = con.cursor()
+    try:
+        if validar_senha(senha) == True:
+            cursor.execute("""INSERT INTO usuario (nome, email, senha)
+                           VALUES (?,?,?)""", (nome, email, senha))
+            con.commit()
+            flash("Usuário cadastrado com sucesso!", "sucess")
+            return redirect(url_for('index'))
+    except Exception as e:
+        flash(f"Ocorreu um erro: {e}" )
+    finally:
+        cursor.close()
 
 if __name__ == "__main__":
     app.run(debug=True)
