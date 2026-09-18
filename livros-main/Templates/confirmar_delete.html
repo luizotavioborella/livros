@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang=pt-br" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca Virtual</title>
+</head>
+<body>
+    <header>
+        <h1>Confirmar Exclusão</h1>
+        <nav>
+            <a href="{{ url_for('index.html') }}" class="btn">Início</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Tem certeza que deseja excluir o livro <strong>{{ livro[1] }}</strong>?</h2>
+
+        <form method="post" action="{{url_for('deletar', id=livro[0]) }}">
+            <div style="...">
+                <button type="submit" class="btn danger">Sim, Excluir</button>
+                <a href="{{ url_for('index') }}" class="btn">Cancelar</a>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

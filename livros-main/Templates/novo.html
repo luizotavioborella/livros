@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca Virtual</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<main>
+    <div class="cabecalho">
+        <h2>Adicionar Livro</h2>
+        <a href="{{ url_for('home') }}" class="btn-voltar">← Voltar</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('criar') }}" method="post">
+        <label>Digite o nome da obra:</label>
+        <input type="text" name="nome" id="nome">
+
+        <label>Digite o nome do autor:</label>
+        <input type="text" name="autor" id="autor">
+
+        <label>Digite seu ano de publicação:</label>
+        <input type="number" name="ano_publicado" id="ano_publicado">
+
+        <div><button type="submit" class="btn">Enviar Informações</button></div>
+    </form>
+</main>
+</body>
+</html>

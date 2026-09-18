@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca Virtual</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<main>
+    <div class="cabecalho">
+        <h2>Cadastre-se</h2>
+        <a href="{{ url_for('index') }}" class="btn-voltar">← Voltar</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <form action="/cadastrar_usuario" method="post">
+        <label>Digite seu nome completo:</label>
+        <input type="text" name="nome" id="nome" placeholder="Ex.: Luiz Otávio Borella" required>
+
+        <label>Digite seu e-mail:</label>
+        <input type="text" name="email" id="email" placeholder="Ex.: usuario@email.com" required>
+
+        <label>Digite sua senha:</label>
+        <input type="password" name="senha" id="senha" placeholder="Ex.: 1234" required>
+
+        <div>
+            <p>Requisitos para senha:</p>
+            <p>Mínimo 8 caracteres</p>
+            <p>Mínimo 1 letra maiúscula</p>
+            <p>Mínimo 1 letra minúscula</p>
+            <p>Mínimo 1 número</p>
+            <p>Mínimo 1 caratere especial</p>
+        </div>
+
+        <div><button type="submit" class="btn">Cadastrar</button></div>
+    </form>
+</main>
+</body>
+</html>

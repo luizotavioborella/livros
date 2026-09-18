@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca Virtual</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<main>
+    <div class="cabecalho">
+        <h2>Lista de Livros</h2>
+        <a href="{{ url_for('novo') }}" class="btn-adicionar">+ Adicionar Livro</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <table>
+        <thead>
+        <tr>
+            <th>Código</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Ano de Publicação</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for livro in livros %}
+        <tr>
+            <td>{{ livro[0] }}</td>
+            <td>{{ livro[1] }}</td>
+            <td>{{ livro[2] }}</td>
+            <td>{{ livro[3] }}</td>
+            <td class="acoes">
+                <a href="{{ url_for('editar', id=livro[0]) }}">Editar</a>
+                <form action="{{ url_for('deletar', id=livro[0]) }}" method="post">
+                    <button type="submit" class="btn-deletar">Deletar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</main>
+</body>
+</html>
