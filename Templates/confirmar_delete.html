@@ -1,25 +1,27 @@
 <!DOCTYPE html>
-<html lang=pt-br" dir="ltr">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Biblioteca Virtual</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Confirmar Exclusão</h1>
-        <nav>
-            <a href="{{ url_for('index.html') }}" class="btn">Início</a>
-        </nav>
-    </header>
-    <main>
-        <h2>Tem certeza que deseja excluir o livro <strong>{{ livro[1] }}</strong>?</h2>
+<main>
+    <div class="cabecalho">
+        <h2>Confirmar Exclusão</h2>
+        <a href="{{ url_for('home') }}" class="btn-voltar">← Voltar</a>
+    </div>
 
-        <form method="post" action="{{url_for('deletar', id=livro[0]) }}">
-            <div style="...">
-                <button type="submit" class="btn danger">Sim, Excluir</button>
-                <a href="{{ url_for('index') }}" class="btn">Cancelar</a>
-            </div>
+    <div class="confirmacao">
+        <h3>Tem certeza que deseja excluir este livro?</h3>
+        <p><strong>{{ livro[1] }}</strong></p>
+        <p>Essa ação não poderá ser desfeita.</p>
+
+        <form action="{{ url_for('deletar', id=livro[0]) }}" method="post">
+            <button type="submit" class="btn-confirmar-delete">Sim, excluir</button>
+            <a href="{{ url_for('home') }}" class="btn-cancelar">Cancelar</a>
         </form>
-    </main>
+    </div>
+</main>
 </body>
 </html>

@@ -10,6 +10,15 @@
     <div class="cabecalho">
         <h2>Login</h2>
     </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     <form action="/login" method="post">
         <label>Digite seu nome completo:</label>
         <input type="text" name="nome" id="nome" placeholder="Ex.: Luiz Otávio Borella" required>
@@ -20,8 +29,8 @@
         <label>Digite sua senha:</label>
         <input type="password" name="senha" id="senha" placeholder="Ex.: 1234" required>
 
-        <div><button type="submit" class="btn">Cadastrar</button></div>
-        <a href="cadastrar_usuario.html">Ainda não tem uma conta? Cadastre-se</a>
+        <div><button type="submit" class="btn">Entrar</button></div>
+        <a href="{{ url_for('cadastrar_usuario') }}" class="link-cadastro">Ainda não tem uma conta? Cadastre-se</a>
     </form>
 </main>
 </body>

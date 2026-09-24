@@ -544,6 +544,8 @@ form div {
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s;
+    text-decoration:none;
+    display:inline-block;
 }
 
 .btn-deletar:hover {
@@ -552,4 +554,82 @@ form div {
     border-color: #dc2626;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(220, 38, 38, 0.25);
+}
+
+.cumprido{
+    text-decoration:line-through;
+}
+
+.confirmacao{
+    position:relative;
+    z-index:1;
+    max-width:520px;
+    margin:auto;
+    padding:35px;
+    background:white;
+    border:1px solid #dbeafe;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 15px 35px rgba(30,64,175,0.12);
+}
+
+.confirmacao h3{
+    margin-bottom:15px;
+    color:#1e293b;
+}
+
+.confirmacao p{
+    margin-bottom:10px;
+}
+
+.confirmacao form{
+    padding:0;
+    margin-top:25px;
+    box-shadow:none;
+    border:none;
+    background:none;
+}
+
+.btn-confirmar-delete{
+    padding:14px;
+    color:white;
+    background:#dc2626;
+    border:none;
+    border-radius:12px;
+    font-family:'Poppins',sans-serif;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.btn-cancelar{
+    padding:14px;
+    color:#2563eb;
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:12px;
+    text-decoration:none;
+    font-weight:600;
+    text-align:center;
+}
+
+.link-cadastro{
+    display:block;
+    width:100%;
+    margin-top:4px;
+    padding:8px 10px;
+    text-align:center;
+    color:#475569;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:500;
+    text-decoration:none;
+    transition:0.2s;
+}
+
+.link-cadastro:hover{
+    color:#2563eb;
+    background:#eff6ff;
+    border-color:#bfdbfe;
 }

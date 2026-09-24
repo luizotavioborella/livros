@@ -6,43 +6,112 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<main>
-    <div class="cabecalho">
-        <h2>Cadastre-se</h2>
-        <a href="{{ url_for('index') }}" class="btn-voltar">← Voltar</a>
-    </div>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="flash-messages">
-        {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
-
-    <form action="/cadastrar_usuario" method="post">
-        <label>Digite seu nome completo:</label>
-        <input type="text" name="nome" id="nome" placeholder="Ex.: Luiz Otávio Borella" required>
-
-        <label>Digite seu e-mail:</label>
-        <input type="text" name="email" id="email" placeholder="Ex.: usuario@email.com" required>
-
-        <label>Digite sua senha:</label>
-        <input type="password" name="senha" id="senha" placeholder="Ex.: 1234" required>
-
-        <div>
-            <p>Requisitos para senha:</p>
-            <p>Mínimo 8 caracteres</p>
-            <p>Mínimo 1 letra maiúscula</p>
-            <p>Mínimo 1 letra minúscula</p>
-            <p>Mínimo 1 número</p>
-            <p>Mínimo 1 caratere especial</p>
+    <main>
+        <div class="cabecalho">
+            <h2>Cadastre-se</h2>
+            <a href="{{ url_for('index') }}" class="btn-voltar">← Voltar</a>
         </div>
 
-        <div><button type="submit" class="btn">Cadastrar</button></div>
-    </form>
-</main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('cadastrar_usuario') }}" method="post">
+            <label>Digite seu nome completo:</label>
+            <input type="text" name="nome" id="nome" placeholder="Ex.: Luiz Otávio Borella" required>
+
+            <label>Digite seu e-mail:</label>
+            <input type="text" name="email" id="email" placeholder="Ex.: usuario@email.com" required>
+
+            <label>Digite sua senha:</label>
+            <input type="password" name="senha" id="senha" placeholder="Ex.: 1234" required>
+
+            <div>
+                <p>Requisitos para senha:</p>
+                <p id="req-caracteres">Mínimo 8 caracteres</p>
+                <p id="req-maiuscula">Mínimo 1 letra maiúscula</p>
+                <p id="req-minuscula">Mínimo 1 letra minúscula</p>
+                <p id="req-numero">Mínimo 1 número</p>
+                <p id="req-especial">Mínimo 1 caractere especial</p>
+            </div>
+
+            <div><button type="submit" class="btn">Cadastrar</button></div>
+        </form>
+    </main>
+
+    <script>
+        const senha = document.getElementById("senha");
+
+        senha.addEventListener("input", function() {
+
+            let min_caractere = false;
+            let min_upper = false;
+            let min_lower = false;
+            let min_num = false;
+            let min_caractere_esp = false;
+
+            if (senha.value.length >= 8) {
+                min_caractere = true;
+            }
+
+            for (let caractere of senha.value) {
+
+                if (caractere >= "A" && caractere <= "Z") {
+                    min_upper = true;
+                }
+
+                if (caractere >= "a" && caractere <= "z") {
+                    min_lower = true;
+                }
+
+                if (caractere >= "0" && caractere <= "9") {
+                    min_num = true;
+                }
+
+                if (!(caractere >= "A" && caractere <= "Z") &&
+                    !(caractere >= "a" && caractere <= "z") &&
+                    !(caractere >= "0" && caractere <= "9")) {
+                    min_caractere_esp = true;
+                }
+            }
+
+            if (min_caractere == true) {
+                document.getElementById("req-caracteres").classList.add("cumprido");
+            } else {
+                document.getElementById("req-caracteres").classList.remove("cumprido");
+            }
+
+            if (min_upper == true) {
+                document.getElementById("req-maiuscula").classList.add("cumprido");
+            } else {
+                document.getElementById("req-maiuscula").classList.remove("cumprido");
+            }
+
+            if (min_lower == true) {
+                document.getElementById("req-minuscula").classList.add("cumprido");
+            } else {
+                document.getElementById("req-minuscula").classList.remove("cumprido");
+            }
+
+            if (min_num == true) {
+                document.getElementById("req-numero").classList.add("cumprido");
+            } else {
+                document.getElementById("req-numero").classList.remove("cumprido");
+            }
+
+            if (min_caractere_esp == true) {
+                document.getElementById("req-especial").classList.add("cumprido");
+            } else {
+                document.getElementById("req-especial").classList.remove("cumprido");
+            }
+
+        });
+    </script>
 </body>
 </html>
