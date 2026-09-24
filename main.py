@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import fdb
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -43,24 +43,27 @@ def validar_senha(senha):
 
 @app.route('/')
 def index():
-    return render_template("login.html")
-
-@app.route("/home")
-def home():
     cursor = con.cursor()
     cursor.execute(""" SELECT l.id_livro
                             ,l.nome
                             ,l.autor
                             ,l.ano_publicado
-                            FROM livro l
-""")
+                            FROM livro l""")
     livros = cursor.fetchall()
     cursor.close()
     return render_template("livros.html", livros=livros)
 
+@app.route('/home')
+def home():
+    return redirect(url_for('index'))
+
 @app.route('/novo')
 def novo():
-    return render_template('novo.html')
+    if 'id_usuario' not in session:
+        flash('precisa estar logado aqui nao ebagunça')
+        return redirect(url_for('login'))
+    else:
+        return render_template('novo.html')
 
 @app.route('/criar', methods=['POST'])
 def criar():
@@ -74,16 +77,21 @@ def criar():
             flash("Erro: Livro já existe!", "error")
             return redirect(url_for('novo'))
         cursor.execute(""" INSERT INTO livro (nome, autor, ano_publicado)
-                       values (?,?,?)""", (nome, autor, ano_publicado))
+                       values (?,?,?) RETURNING ID_LIVRO""", (nome, autor, ano_publicado))
+        id_livro = cursor.fetchone()[0]
         con.commit()
+        arquivo = request.files['imagem']
+        arquivo.save(f'uploads/capa{id_livro}.jpg')
+
         flash("Livro criado com sucesso!", "success")
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
     except Exception as e:
         flash(f"Ocorreu um erro: {e}", "error")
         con.rollback()
         return redirect(url_for('novo'))
     finally:
         cursor.close()
+
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar(id):
     cursor = con.cursor()
@@ -92,7 +100,7 @@ def editar(id):
         livro = cursor.fetchone()
         if not livro:
             flash("Livro não encontrado!")
-            return redirect(url_for('home'))
+            return redirect(url_for('index'))
 
         if request.method == 'POST':
             nome = request.form['nome']
@@ -101,7 +109,7 @@ def editar(id):
             cursor.execute("""update livro set nome = ?, autor = ?, ano_publicado = ? where id_livro = ?""", (nome, autor, ano_publicado, id))
             con.commit()
             flash("Livro editado com sucesso!", "success")
-            return redirect(url_for('home'))
+            return redirect(url_for('index'))
         else:
             return render_template("editar.html", livro=livro)
     except Exception as e:
@@ -127,11 +135,11 @@ def deletar(id):
         cursor.execute("""DELETE FROM livro WHERE id_livro = ?""", (id,))
         con.commit()
         flash("Livro deletado com sucesso!", "success")
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
     except Exception as e:
         flash(f"Ocorreu um erro: {e}", "error")
         con.rollback()
-        return redirect(url_for('home'))
+        return redirect(url_for('index'))
     finally:
         cursor.close()
 
@@ -154,7 +162,7 @@ def cadastrar_usuario():
                               VALUES (?,?,?)""", (nome, email, senha))
             con.commit()
             flash("Usuário cadastrado com sucesso!", "success")
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
         except Exception as e:
             flash(f"Ocorreu um erro: {e}", "error")
         finally:
@@ -162,23 +170,45 @@ def cadastrar_usuario():
 
     return render_template('cadastrar_usuario.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+
+    if session.get('bloqueado') == True:
+        flash("Login bloqueado após 3 tentativas incorretas!", "error")
+        return redirect(url_for('login'))
+
     nome = request.form['nome']
     email = request.form['email']
     senha = request.form['senha']
 
     cursor = con.cursor()
-    cursor.execute("""SELECT senha FROM usuario
+    cursor.execute("""SELECT id_usuario, senha FROM usuario
                       WHERE nome = ? AND email = ?""", (nome, email))
     usuario = cursor.fetchone()
     cursor.close()
 
-    if usuario and check_password_hash(usuario[0], senha):
-        return redirect(url_for('home'))
-    else:
-        flash("Nome, e-mail ou senha incorretos!", "error")
+    if usuario and check_password_hash(usuario[1], senha):
+        session['id_usuario'] = usuario[0]
+        session['tentativas_login'] = 0
         return redirect(url_for('index'))
+    else:
+        tentativas = session.get('tentativas_login', 0) + 1
+        session['tentativas_login'] = tentativas
+
+        if tentativas >= 3:
+            session['bloqueado'] = True
+            flash("Você errou a senha 3 vezes. Login bloqueado!", "error")
+        else:
+            flash(f"Nome, e-mail ou senha incorretos! Tentativa {tentativas} de 3.", "error")
+
+        return redirect(url_for('login'))
+
+@app.route('/logout')
+def logout():
+    session.pop('id_usuario', None)
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug=True)
