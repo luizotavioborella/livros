@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = 'chave_secreta_da_turma_b'
 
 host = "localhost"
 # database = r"C:\Users\Aluno\Downloads\BANCO_BORELLA\BANCO.FDB"
-database = r"C:\Users\Borella\Downloads\livros-main\livros\BANCO_BORELLA\BANCO.FDB"
+database = r"C:\Users\Aluno\Downloads\livros-main (1)\livros-main\livros-sql\BANCO_BORELLA\BANCO.FDB"
 user = "sysdba"
 password = "sysdba"
 
