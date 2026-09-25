@@ -9,7 +9,6 @@
 <main>
     <div class="topo-site">
         <h1>Biblioteca</h1>
-
         <div class="topo-botoes">
             <a href="{{ url_for('novo') }}" class="btn-topo">Adicionar Livro</a>
             <a href="{{ url_for('index') }}" class="btn-topo">Início</a>
@@ -19,7 +18,6 @@
             <a href="{{ url_for('login') }}" class="btn-log">Logar</a>
             {% endif %}
         </div>
-
         <div class="topo-flash">
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -32,7 +30,10 @@
     </div>
 
     <section class="painel-livros">
-        <h2>Lista de Livros</h2>
+        <div class="titulo-pdf">
+            <h2>Lista de Livros</h2>
+            <a href="{{ url_for('relatorio') }}" class="btn-log btn-pdf">Criar PDF</a>
+        </div>
 
         <table>
             <thead>

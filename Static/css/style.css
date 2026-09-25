@@ -815,3 +815,18 @@ form div {
         text-align:center;
     }
 }
+
+.titulo-pdf{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.titulo-pdf h2{
+    margin-bottom:0;
+}
+
+.btn-pdf{
+    margin-left:20px;
+}
